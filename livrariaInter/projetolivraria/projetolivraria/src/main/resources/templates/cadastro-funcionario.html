@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastro de Funcionário</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen flex items-center justify-center">
+    <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-2xl">
+        <h2 class="text-2xl font-bold mb-6">Dados do Funcionário</h2>
+        <form th:action="@{/funcionarios/salvar}" th:object="${funcionario}" method="post" class="space-y-4">
+            <input type="hidden" th:field="*{id}" />
+            <div>
+                <label>Nome</label>
+                <input type="text" th:field="*{nome}" required class="w-full border p-2 rounded"/>
+            </div>
+            <div>
+                <label>E-mail (login)</label>
+                <input type="email" th:field="*{email}" required class="w-full border p-2 rounded"/>
+            </div>
+            <div>
+                <label>Senha</label>
+                <input type="password" th:field="*{senha}" class="w-full border p-2 rounded" placeholder="Deixe em branco para manter"/>
+            </div>
+            <div>
+                <label>Cargo</label>
+                <input type="text" th:field="*{cargo}" class="w-full border p-2 rounded"/>
+            </div>
+            <div class="flex justify-end">
+                <a th:href="@{/funcionarios}" class="px-4 py-2 bg-gray-300 rounded">Cancelar</a>
+                <button type="submit" class="px-4 py-2 bg-purple-600 text-white rounded">Salvar</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

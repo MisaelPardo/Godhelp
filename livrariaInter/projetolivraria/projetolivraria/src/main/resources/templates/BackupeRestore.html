@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Livraria - Backup e Restauração</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Configuração de cores personalizadas do Tailwind para combinar com a Home -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        theme: {
+                            brown: '#592202',
+                            light: '#D9B89C',
+                            rust: '#A65C1C',
+                            gold: '#D98E32',
+                            black: '#260101'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #D9B89C; }
+        ::-webkit-scrollbar-thumb { background: #592202; border-radius: 5px; }
+        ::-webkit-scrollbar-thumb:hover { background: #A65C1C; }
+        
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+        }
+    </style>
+</head>
+<body class="bg-theme-light min-h-screen font-sans text-theme-black flex flex-col">
+
+    <!-- Header (Igual à Home) -->
+    <header class="bg-theme-brown border-b-4 border-theme-rust shadow-lg px-6 py-4">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-extrabold text-theme-gold tracking-tight flex items-center">
+                <i class="fa-solid fa-book-open mr-3 text-theme-light"></i> 
+                <a th:href="@{/home}" class="hover:underline">Sistema Livraria</a>
+                <span class="mx-3 text-theme-rust">/</span>
+                <span class="text-white text-lg font-normal">Backup e Restore</span>
+            </h1>
+            <div class="text-sm font-medium text-theme-light">
+                <a th:href="@{/home}" class="text-theme-gold hover:text-white transition-colors mr-4">
+                    <i class="fa-solid fa-arrow-left mr-1"></i> Voltar
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-5xl mx-auto w-full p-6 mt-6">
+
+        <!-- Área de Feedback (Mensagens de Sucesso/Erro) -->
+        <div id="feedback-message" class="hidden p-4 mb-8 rounded-lg font-medium border-l-4 shadow-md flex items-center gap-3">
+            <div id="feedback-icon" class="flex-shrink-0"></div>
+            <div id="feedback-text" class="flex-1"></div>
+        </div>
+
+        <!-- Título da Seção -->
+        <div class="mb-8 text-center">
+            <h2 class="text-3xl font-bold text-theme-brown mb-2">Gerenciamento de Dados</h2>
+            <p class="text-theme-rust font-medium">Realize cópias de segurança ou restaure o sistema para um ponto anterior.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            
+            <!-- CARD DE BACKUP -->
+            <div class="glass-panel rounded-xl shadow-xl border-t-4 border-theme-rust p-8 flex flex-col items-center text-center transform transition duration-300 hover:scale-[1.02]">
+                <div class="bg-theme-brown text-theme-gold p-5 rounded-full mb-6 shadow-lg">
+                    <i class="fa-solid fa-cloud-arrow-up text-4xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-theme-brown mb-3">Realizar Backup</h3>
+                <p class="text-gray-700 mb-8 flex-grow">
+                    Cria uma cópia completa de todos os livros, clientes e pedidos atuais e salva no servidor seguro.
+                    <br><span class="text-sm text-theme-rust mt-2 block">(Recomendado diariamente)</span>
+                </p>
+                <button id="backup-btn" onclick="openConfirmationModal('backup')" 
+                    class="w-full py-3 px-6 bg-theme-rust hover:bg-theme-brown text-white rounded-lg font-bold shadow-md transition duration-300 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-save"></i> SALVAR DADOS AGORA
+                </button>
+            </div>
+
+            <!-- CARD DE RESTORE (Zona de Perigo) -->
+            <div class="glass-panel rounded-xl shadow-xl border-t-4 border-red-600 p-8 flex flex-col items-center text-center transform transition duration-300 hover:scale-[1.02] relative overflow-hidden">
+                <!-- Faixa de aviso -->
+                <div class="absolute top-0 right-0 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-bl-lg">
+                    ZONA DE PERIGO
+                </div>
+
+                <div class="bg-theme-black text-red-500 p-5 rounded-full mb-6 shadow-lg border-2 border-red-600">
+                    <i class="fa-solid fa-cloud-arrow-down text-4xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-theme-black mb-3">Restaurar Sistema</h3>
+                <p class="text-gray-700 mb-8 flex-grow">
+                    Reverte o banco de dados para o último backup salvo. 
+                    <strong class="text-red-700 block mt-2">
+                        <i class="fa-solid fa-triangle-exclamation"></i> CUIDADO: Todos os dados criados após o último backup serão perdidos permanentemente.
+                    </strong>
+                </p>
+                <button id="restore-btn" onclick="openConfirmationModal('restore')" 
+                    class="w-full py-3 px-6 bg-theme-black hover:bg-red-700 text-white rounded-lg font-bold shadow-md transition duration-300 flex items-center justify-center gap-2 border border-red-900/30">
+                    <i class="fa-solid fa-rotate-left"></i> RESTAURAR DADOS
+                </button>
+            </div>
+
+        </div>
+
+        <!-- Informações Técnicas -->
+        <div class="mt-12 bg-white/50 rounded-lg p-6 border border-theme-rust/20 text-sm text-theme-brown">
+            <h4 class="font-bold border-b border-theme-rust/30 pb-2 mb-3"><i class="fa-solid fa-server mr-2"></i>Status do Servidor</h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <p><span class="font-semibold">Banco de Dados:</span> SQL Server (bdlivraria)</p>
+                <p><span class="font-semibold">Destino do Backup:</span> Servidor Local (C:\...)</p>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="text-center p-6 text-sm text-theme-brown font-semibold opacity-80">
+        &copy; 2025 Livraria Projeto - Módulo de Segurança
+    </footer>
+
+    <!-- ================= MODAIS E OVERLAYS ================= -->
+
+    <!-- Modal de Confirmação -->
+    <div id="confirmation-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center z-50 transition-opacity">
+        <div class="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full mx-4 border-4 border-theme-light transform scale-100 transition-transform">
+            <div class="text-center">
+                <div class="mb-4">
+                    <i class="fa-solid fa-circle-question text-5xl text-theme-rust"></i>
+                </div>
+                <h3 id="modal-title" class="text-2xl font-bold mb-4 text-theme-brown">Confirmar Ação</h3>
+                <p id="modal-text" class="text-gray-700 mb-8 text-lg">Tem certeza?</p>
+                
+                <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                    <button onclick="closeConfirmationModal()" 
+                        class="px-5 py-2 text-theme-brown bg-gray-200 hover:bg-gray-300 rounded-lg font-bold transition duration-150">
+                        Cancelar
+                    </button>
+                    <button id="confirm-action-btn" 
+                        class="px-5 py-2 text-white bg-theme-rust hover:bg-theme-brown rounded-lg shadow-md font-bold transition duration-150">
+                        Confirmar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overlay de Carregamento (Bloqueia a tela durante o processo) -->
+    <div id="loading-overlay" class="fixed inset-0 bg-theme-brown/90 z-50 hidden flex flex-col items-center justify-center text-white">
+        <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-theme-gold mb-4"></div>
+        <h2 id="loading-text" class="text-2xl font-bold animate-pulse">Processando...</h2>
+        <p class="text-theme-light mt-2 text-sm">Por favor, não feche a página.</p>
+    </div>
+
+    <!-- Script Lógico (Copiado e Adaptado do seu arquivo original) -->
+    <script>
+        let pendingAction = '';
+        const feedbackDiv = document.getElementById('feedback-message');
+        const feedbackText = document.getElementById('feedback-text');
+        const feedbackIcon = document.getElementById('feedback-icon');
+        const modal = document.getElementById('confirmation-modal');
+        const modalText = document.getElementById('modal-text');
+        const confirmBtn = document.getElementById('confirm-action-btn');
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const loadingText = document.getElementById('loading-text');
+
+        // Função visual para mostrar mensagens
+        function showFeedback(message, type, iconSvg) {
+            feedbackDiv.className = 'p-4 mb-6 rounded-lg font-medium border-l-4 transition-all duration-300 ease-in-out flex items-center gap-3 shadow-lg';
+            
+            if (type === 'success') {
+                feedbackDiv.classList.add('bg-green-100', 'text-green-800', 'border-green-600');
+            } else if (type === 'warning') {
+                feedbackDiv.classList.add('bg-orange-100', 'text-orange-900', 'border-orange-500');
+            } else if (type === 'error') {
+                feedbackDiv.classList.add('bg-red-100', 'text-red-900', 'border-red-600');
+            }
+
+            feedbackText.innerHTML = message;
+            feedbackIcon.innerHTML = iconSvg;
+            feedbackDiv.classList.remove('hidden');
+
+            // Scroll suave até a mensagem
+            feedbackDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+            setTimeout(() => {
+                feedbackDiv.classList.add('hidden');
+            }, 8000);
+        }
+
+        // Abre o modal de confirmação
+        function openConfirmationModal(action) {
+            pendingAction = action;
+            modal.classList.remove('hidden');
+
+            const titleEl = modal.querySelector('#modal-title');
+
+            if (action === 'backup') {
+                titleEl.textContent = 'Confirmar Backup';
+                titleEl.className = 'text-2xl font-bold mb-4 text-theme-rust';
+                modalText.innerHTML = 'Você confirma que deseja salvar o estado atual do banco de dados no servidor? <br><span class="text-sm text-gray-500 mt-2 block">Isso substituirá o backup anterior.</span>';
+                
+                confirmBtn.textContent = 'SIM, FAZER BACKUP';
+                confirmBtn.className = 'px-5 py-2 text-white bg-theme-rust hover:bg-theme-brown rounded-lg transition duration-150 font-bold shadow-md';
+                confirmBtn.onclick = performBackup;
+            } else if (action === 'restore') {
+                titleEl.textContent = 'ATENÇÃO CRÍTICA!';
+                titleEl.className = 'text-2xl font-bold mb-4 text-red-600';
+                modalText.innerHTML = '<div class="bg-red-50 p-3 rounded border border-red-200 text-left text-sm text-red-800"><strong>Isso apagará todos os dados atuais!</strong><br>O sistema voltará exatamente como estava no último backup.</div><br>O sistema será reiniciado e você precisará fazer login novamente.';
+                
+                confirmBtn.textContent = 'SIM, RESTAURAR TUDO';
+                confirmBtn.className = 'px-5 py-2 text-white bg-theme-black hover:bg-red-700 rounded-lg transition duration-150 font-bold shadow-md ring-2 ring-red-500 ring-offset-2';
+                confirmBtn.onclick = performRestore;
+            }
+        }
+
+        function closeConfirmationModal() {
+            modal.classList.add('hidden');
+            pendingAction = '';
+        }
+
+        // --- LÓGICA DE BACKUP REAL ---
+        async function performBackup() {
+            closeConfirmationModal();
+            const backupBtn = document.getElementById('backup-btn');
+            const originalContent = backupBtn.innerHTML;
+            
+            // Estado de Loading no botão
+            backupBtn.disabled = true;
+            backupBtn.classList.add('opacity-75', 'cursor-not-allowed');
+            backupBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Salvando no Servidor...';
+
+            try {
+                const response = await fetch('/api/backup', { method: 'POST' });
+                const data = await response.json();
+
+                if (response.ok && data.status === 'success') {
+                    const iconSvg = '<i class="fa-solid fa-circle-check text-2xl text-green-600"></i>';
+                    showFeedback('<strong>SUCESSO!</strong> O backup foi realizado e salvo no servidor com segurança.', 'success', iconSvg);
+                } else {
+                    throw new Error(data.message || 'Erro desconhecido.');
+                }
+            } catch (error) {
+                const iconSvg = '<i class="fa-solid fa-triangle-exclamation text-2xl text-red-600"></i>';
+                showFeedback(`<strong>ERRO:</strong> ${error.message}`, 'error', iconSvg);
+            } finally {
+                backupBtn.disabled = false;
+                backupBtn.classList.remove('opacity-75', 'cursor-not-allowed');
+                backupBtn.innerHTML = originalContent;
+            }
+        }
+
+        // --- LÓGICA DE RESTORE REAL ---
+        async function performRestore() {
+            closeConfirmationModal();
+            const restoreBtn = document.getElementById('restore-btn');
+            
+            loadingText.textContent = 'Restaurando Banco de Dados...';
+            loadingOverlay.classList.remove('hidden');
+
+            try {
+                const response = await fetch('/api/restore', { method: 'POST' });
+                const data = await response.json();
+
+                if (response.ok && data.status === 'success') {
+                    loadingText.innerHTML = 'Sucesso!<br><span class="text-sm font-normal">Reiniciando sessão...</span>';
+                    
+                    setTimeout(() => {
+                        window.location.href = '/login?logout'; 
+                    }, 2000);
+
+                } else {
+                    throw new Error(data.message || 'Erro ao restaurar.');
+                }
+            } catch (error) {
+                loadingOverlay.classList.add('hidden');
+                const iconSvg = '<i class="fa-solid fa-bomb text-2xl text-red-600"></i>';
+                showFeedback(`<strong>FALHA CRÍTICA:</strong> ${error.message}`, 'error', iconSvg);
+            }
+        }
+    </script>
+</body>
+</html>

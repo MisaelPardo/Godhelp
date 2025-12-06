@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Clientes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Personalização da barra de rolagem */
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #D9B89C; }
+        ::-webkit-scrollbar-thumb { background: #592202; border-radius: 5px; }
+        ::-webkit-scrollbar-thumb:hover { background: #A65C1C; }
+    </style>
+</head>
+<!-- Body: Fundo Bege (#D9B89C) e Texto Marrom Escuro (#260101) -->
+<body class="bg-[#D9B89C] min-h-screen font-sans text-[#260101]">
+
+<!-- Nav: Fundo Marrom Profundo (#592202) com borda Laranja (#A65C1C) -->
+<nav class="bg-[#592202] border-b-4 border-[#A65C1C] shadow-lg p-4 mb-8">
+    <div class="max-w-7xl mx-auto flex justify-between items-center px-4">
+        <!-- Logo: Cor Ouro (#D98E32) -->
+        <a th:href="@{/home}" class="font-bold text-xl text-[#D98E32] hover:text-white transition-colors flex items-center">
+            <i class="fa-solid fa-book-open mr-2"></i> Sistema Livraria
+        </a>
+        
+        <div class="flex gap-4 items-center">
+            <!-- BOTÃO 1: NOVO CLIENTE -->
+            <a th:href="@{/clientes/novo}" class="bg-[#D98E32] text-[#260101] px-4 py-2 rounded hover:bg-[#A65C1C] hover:text-white font-bold shadow-md transition-colors flex items-center">
+                <i class="fa-solid fa-plus mr-2"></i> Novo Cliente
+            </a>
+
+            <!-- BOTÃO 2: VOLTAR -->
+            <a th:href="@{/home}" class="flex items-center border border-[#D98E32] text-[#D98E32] hover:bg-[#D98E32] hover:text-[#260101] px-4 py-2 rounded transition duration-200 font-bold">
+                <i class="fas fa-arrow-left mr-2"></i> Voltar 
+            </a>
+        </div>
+    </div>
+</nav>
+
+<!-- Main Container: Centraliza tudo (Busca + Tabela) -->
+<main class="max-w-7xl mx-auto px-4">
+
+    <!-- Campo de Busca - Agora dentro do container alinhado -->
+    <form th:action="@{/clientes}" method="get" class="mb-6 flex flex-col sm:flex-row gap-4">
+        <div class="relative flex-grow">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class="fas fa-search text-[#A65C1C]"></i>
+            </div>
+            <input 
+                type="text" 
+                name="busca" 
+                placeholder="Pesquisar por Nome..." 
+                th:value="${busca}"
+                class="w-full pl-10 p-3 border-2 border-[#A65C1C] rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-[#D98E32] bg-white/90 placeholder-[#A65C1C]/70"
+            />
+        </div>
+        
+        <div class="flex gap-4">
+            <button type="submit" class="bg-[#A65C1C] hover:bg-[#D98E32] text-white px-6 py-3 rounded-lg shadow-md font-bold transition-all duration-200 flex-shrink-0">
+                Buscar
+            </button>
+            <!-- Botão para Limpar a Busca -->
+            <a th:href="@{/clientes}" class="border-2 border-[#592202] text-[#592202] hover:bg-[#592202] hover:text-white px-6 py-3 rounded-lg font-bold transition-all duration-200 flex items-center flex-shrink-0 bg-white/30 hover:bg-[#592202]">
+                <i class="fa-solid fa-eraser mr-2"></i> Limpar
+            </a>
+        </div>
+    </form>
+
+    <!-- Container da Tabela: Borda Marrom Médio (#A65C1C) -->
+    <div class="bg-white shadow-xl rounded-lg overflow-hidden border-2 border-[#A65C1C]">
+        <table class="min-w-full divide-y divide-[#D9B89C]">
+            <!-- Cabeçalho: Fundo Marrom (#592202), Texto Ouro (#D98E32) -->
+            <thead class="bg-[#592202]">
+            <tr>
+                <th class="px-6 py-4 text-left font-bold text-[#D98E32] tracking-wider uppercase text-sm">ID</th>
+                <th class="px-6 py-4 text-left font-bold text-[#D98E32] tracking-wider uppercase text-sm">Nome</th>
+                <th class="px-6 py-4 text-left font-bold text-[#D98E32] tracking-wider uppercase text-sm">Telefone</th>
+                <th class="px-6 py-4 text-left font-bold text-[#D98E32] tracking-wider uppercase text-sm">Email</th>
+                <th class="px-6 py-4 text-right font-bold text-[#D98E32] tracking-wider uppercase text-sm">Ações</th>
+            </tr>
+            </thead>
+            <!-- Corpo: Divisores em Bege (#D9B89C) -->
+            <tbody class="divide-y divide-[#D9B89C] bg-white">
+            <tr th:each="c : ${clientes}" class="hover:bg-[#FFF8F0] transition-colors">
+                <td class="px-6 py-4 whitespace-nowrap text-[#592202] font-semibold" th:text="${c.idCliente}">1</td>
+                <td class="px-6 py-4 whitespace-nowrap text-[#260101]" th:text="${c.nome}">Nome</td>
+                <td class="px-6 py-4 whitespace-nowrap text-[#592202]" th:text="${c.ddd + ' ' + c.telefone}">DDD/Telefone</td>
+                <td class="px-6 py-4 whitespace-nowrap text-[#592202]" th:text="${c.email}">Email</td>
+                <td class="px-6 py-4 whitespace-nowrap text-right font-medium">
+                    <!-- Botão Editar: Laranja Escuro (#A65C1C) -->
+                    <a th:href="@{/clientes/editar/{id}(id=${c.idCliente})}" class="text-[#A65C1C] hover:text-[#D98E32] mr-3 font-bold transition-colors">
+                        <i class="fa-solid fa-pen-to-square"></i> Editar
+                    </a>
+                    <!-- Botão Excluir: Marrom Profundo (#592202) -->
+                    <a th:href="@{/clientes/deletar/{id}(id=${c.idCliente})}" class="text-[#592202] hover:text-red-700 font-bold transition-colors" onclick="return confirm('Excluir?')">
+                        <i class="fa-solid fa-trash"></i> Excluir
+                    </a>
+                </td>
+            </tr>
+            <!-- Estado vazio -->
+            <tr th:if="${#lists.isEmpty(clientes)}">
+                <td colspan="5" class="px-6 py-8 text-center text-[#A65C1C] font-medium text-lg">
+                    <i class="fa-solid fa-folder-open mb-2 text-2xl"></i><br>
+                    Nenhum cliente cadastrado.
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+
+<!-- Footer simples para fechar a página -->
+<footer class="text-center p-8 mt-4 text-sm text-[#592202] opacity-70">
+    &copy; 2025 Livraria Projeto
+</footer>
+
+</body>
+</html>

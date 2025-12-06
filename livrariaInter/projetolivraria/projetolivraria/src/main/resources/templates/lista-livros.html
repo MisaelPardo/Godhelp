@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Livros - Listagem</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Personalização da barra de rolagem */
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #D9B89C; }
+        ::-webkit-scrollbar-thumb { background: #592202; border-radius: 5px; }
+        ::-webkit-scrollbar-thumb:hover { background: #A65C1C; }
+    </style>
+</head>
+<!-- Fundo: Bege (#D9B89C) -->
+<body class="bg-[#D9B89C] min-h-screen font-sans text-[#260101]">
+
+<!-- Navbar: Marrom Profundo (#592202) com borda Laranja (#A65C1C) -->
+<nav class="bg-[#592202] border-b-4 border-[#A65C1C] shadow-lg p-4 mb-8">
+    <div class="max-w-7xl mx-auto flex justify-between items-center">
+        <!-- Título: Ouro (#D98E32) -->
+        <a th:href="@{/home}" class="font-extrabold text-2xl text-[#D98E32] tracking-tight hover:text-white transition-colors">
+            <i class="fa-solid fa-book-open mr-2"></i> Sistema Livraria
+        </a>
+        
+        <!-- Botões de Ação -->
+        <div class="flex items-center gap-4">
+            <!-- Botão NOVO: Fundo Ouro (#D98E32), Texto Escuro. Hover: Fundo Ferrugem (#A65C1C) -->
+            <a th:href="@{/livros/novo}" class="bg-[#D98E32] hover:bg-[#A65C1C] hover:text-white text-[#260101] px-5 py-2 rounded-lg shadow-md font-bold transition-all duration-200 flex items-center">
+                <i class="fa-solid fa-plus mr-2"></i> Novo Livro
+            </a>
+
+            <!-- Botão VOLTAR: Borda Ouro, Texto Ouro. Hover: Preenchimento Ouro -->
+            <a th:href="@{/home}" class="border-2 border-[#D98E32] text-[#D98E32] hover:bg-[#D98E32] hover:text-[#260101] px-5 py-2 rounded-lg font-bold transition-all duration-200 flex items-center">
+                <i class="fas fa-arrow-left mr-2"></i> Voltar
+            </a>
+        </div>
+    </div>
+</nav>
+
+<main class="max-w-7xl mx-auto px-4 pb-10">
+
+    <!-- Campo de Busca - Layout responsivo melhorado -->
+    <form th:action="@{/livros}" method="get" class="mb-6 flex flex-col sm:flex-row gap-4">
+        <input 
+            type="text" 
+            name="busca" 
+            placeholder="Pesquisar por Título, Autor, Categoria ou ISBN..." 
+            th:value="${busca}"
+            class="flex-grow p-3 border-2 border-[#A65C1C] rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-[#D98E32]"
+        />
+        <div class="flex gap-4">
+            <button type="submit" class="bg-[#A65C1C] hover:bg-[#D98E32] text-white px-6 py-3 rounded-lg shadow-md font-bold transition-all duration-200 flex-shrink-0">
+                <i class="fas fa-search"></i> Buscar
+            </button>
+            <!-- Botão para Limpar a Busca -->
+            <a th:href="@{/livros}" class="border-2 border-[#592202] text-[#592202] hover:bg-[#592202] hover:text-white px-6 py-3 rounded-lg font-bold transition-all duration-200 flex items-center flex-shrink-0">
+                <i class="fa-solid fa-eraser mr-2"></i> Limpar
+            </a>
+        </div>
+    </form>
+
+    <!-- Container da Tabela: Borda Ferrugem (#A65C1C) -->
+    <div class="bg-white shadow-xl rounded-xl overflow-hidden border-2 border-[#A65C1C]">
+        <!-- Tabela responsiva (overflow-x para telas pequenas) -->
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-[#D9B89C]">
+                <!-- Cabeçalho da Tabela: Marrom Escuro (#592202) -->
+                <thead class="bg-[#592202]">
+                    <tr>
+                        <th class="px-6 py-4 text-left text-xs font-bold text-[#D98E32] uppercase tracking-wider">ISBN</th>
+                        <th class="px-6 py-4 text-left text-xs font-bold text-[#D98E32] uppercase tracking-wider">Título</th>
+                        <th class="px-6 py-4 text-left text-xs font-bold text-[#D98E32] uppercase tracking-wider">Autor</th>
+                        <th class="px-6 py-4 text-left text-xs font-bold text-[#D98E32] uppercase tracking-wider">Categoria</th> 
+                        <th class="px-6 py-4 text-left text-xs font-bold text-[#D98E32] uppercase tracking-wider">Estoque</th>
+                        <th class="px-6 py-4 text-left text-xs font-bold text-[#D98E32] uppercase tracking-wider">Preço</th>
+                        <th class="px-6 py-4 text-left text-xs font-bold text-[#D98E32] uppercase tracking-wider">Ações</th>
+                    </tr>
+                </thead>
+                <!-- Corpo da Tabela -->
+                <tbody class="bg-white divide-y divide-[#D9B89C]">
+                    <tr th:each="liv : ${livros}" class="hover:bg-[#FFF8F0] transition-colors">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-[#592202]" th:text="${liv.isbnLivro}"></td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-[#260101]" th:text="${liv.nome}"></td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-[#592202]" th:text="${liv.autor}"></td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-[#260101]" th:text="${liv.categoria}"></td> 
+                        
+                        <!-- Lógica de Estoque com Alerta -->
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-[#260101]">
+                            <!-- Caso Normal: Estoque > 5 -->
+                            <span th:if="${liv.quantidadeEstoque > 5}" 
+                                  class="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-[#D9B89C] text-[#592202]" 
+                                  th:text="${liv.quantidadeEstoque}">
+                            </span>
+                            
+                            <!-- Caso Alerta: Estoque <= 5 -->
+                            <div th:if="${liv.quantidadeEstoque <= 5}" class="flex flex-col items-start gap-1">
+                                <span class="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-red-100 text-red-800 border border-red-200"
+                                      th:text="${liv.quantidadeEstoque}">
+                                </span>
+                                <span class="text-[10px] font-bold text-red-600 uppercase tracking-wide animate-pulse flex items-center">
+                                    <i class="fa-solid fa-triangle-exclamation mr-1"></i> Repor Estoque
+                                </span>
+                            </div>
+                        </td>
+
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-[#A65C1C]" th:text="${'R$ ' + #numbers.formatDecimal(liv.preco, 1, 'POINT', 2, 'COMMA')}"></td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <!-- Botão Editar: Texto Ferrugem (#A65C1C) -->
+                            <a th:href="@{/livros/editar/{isbn}(isbn=${liv.isbnLivro})}" class="text-[#A65C1C] hover:text-[#592202] mr-4 transition-colors">
+                                <i class="fa-solid fa-pen-to-square"></i> Editar
+                            </a>
+                            <!-- Botão Excluir: Texto Marrom Escuro (#592202) com hover vermelho suave -->
+                            <a th:href="@{/livros/excluir/{isbn}(isbn=${liv.isbnLivro})}" class="text-[#592202] hover:text-red-700 transition-colors" onclick="return confirm('Tem certeza que deseja excluir o livro \'' + this.parentNode.parentNode.children[1].innerText + '\'?')">
+                                <i class="fa-solid fa-trash"></i> Excluir
+                            </a>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(livros)}">
+                        <td colspan="7" class="px-6 py-10 text-center text-[#A65C1C] font-medium text-lg">
+                            <i class="fa-solid fa-box-open block text-4xl mb-2 text-[#D9B89C]"></i>
+                            Nenhum livro encontrado.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<!-- Footer simples para fechar a página -->
+<footer class="text-center p-8 mt-4 text-sm text-[#592202] opacity-70">
+    &copy; 2025 Livraria Projeto
+</footer>
+
+</body>
+</html>

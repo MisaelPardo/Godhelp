@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Requisitos SQL</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome para ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50 font-sans text-gray-800">
+
+    <!-- Navegação -->
+    <nav class="bg-white shadow-sm border-b border-gray-200 mb-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <i class="fas fa-database text-blue-600 text-2xl mr-3"></i>
+                    <h1 class="font-bold text-xl text-gray-900">Integração SQL Server</h1>
+                </div>
+                <div class="flex items-center">
+                    <a th:href="@{/home}" class="flex items-center text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition">
+                        <i class="fas fa-arrow-left mr-2"></i> Voltar ao Início
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+
+        <!-- Mensagens de Feedback (Flash Attributes) -->
+        <div th:if="${sucesso}" class="mb-6 bg-green-50 border-l-4 border-green-500 p-4 rounded shadow-sm flex items-start">
+            <div class="flex-shrink-0">
+                <i class="fas fa-check-circle text-green-500 mt-0.5"></i>
+            </div>
+            <div class="ml-3">
+                <p class="text-sm text-green-700" th:text="${sucesso}"></p>
+            </div>
+        </div>
+
+        <div th:if="${erro}" class="mb-6 bg-red-50 border-l-4 border-red-500 p-4 rounded shadow-sm flex items-start">
+            <div class="flex-shrink-0">
+                <i class="fas fa-exclamation-circle text-red-500 mt-0.5"></i>
+            </div>
+            <div class="ml-3">
+                <p class="text-sm text-red-700" th:text="${erro}"></p>
+            </div>
+        </div>
+
+        <!-- Grid Principal -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+            <!-- 1. FUNCTION: Filtro de Livros -->
+            <section class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                <div class="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-4 flex justify-between items-center">
+                    <h2 class="text-white font-bold text-lg flex items-center">
+                        <i class="fas fa-filter mr-2"></i> 1. Function SQL (Busca)
+                    </h2>
+                    <span class="bg-blue-800 text-blue-100 text-xs px-2 py-1 rounded">FN_Buscar_Livros...</span>
+                </div>
+                
+                <div class="p-6">
+                    <p class="text-gray-500 text-sm mb-4">
+                        Utiliza uma <strong>Table-Valued Function</strong> para filtrar livros por faixa de preço. Altere o preço para testar a <strong>Trigger</strong>.
+                    </p>
+
+                    <form th:action="@{/requisitos/buscar}" method="get" class="flex gap-4 mb-6 bg-gray-50 p-4 rounded-lg border border-gray-200">
+                        <div class="w-1/2">
+                            <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Preço Mín (R$)</label>
+                            <input type="number" name="min" step="0.01" value="0" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border" placeholder="0.00" required>
+                        </div>
+                        <div class="w-1/2">
+                            <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Preço Máx (R$)</label>
+                            <input type="number" name="max" step="0.01" value="200" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border" placeholder="100.00" required>
+                        </div>
+                        <div class="flex items-end">
+                            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow transition duration-150 ease-in-out">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Tabela de Resultados da Function -->
+                    <div class="overflow-y-auto max-h-80 border rounded-lg">
+                        <table class="min-w-full divide-y divide-gray-200" th:if="${livrosFiltrados}">
+                            <thead class="bg-gray-50 sticky top-0">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Livro</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Preço</th>
+                                    <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Teste de Trigger</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                <tr th:each="l : ${livrosFiltrados}" class="hover:bg-gray-50 transition">
+                                    <td class="px-4 py-3">
+                                        <div class="text-sm font-medium text-gray-900" th:text="${l.nome}"></div>
+                                        <div class="text-xs text-gray-500" th:text="${l.nome_fornecedor}"></div>
+                                        <div class="text-xs text-gray-400 font-mono" th:text="${l.isbn_livro}"></div>
+                                    </td>
+                                    <td class="px-4 py-3 whitespace-nowrap">
+                                        <span class="text-green-600 font-bold text-sm" th:text="'R$ ' + ${l.preco}"></span>
+                                    </td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-center">
+                                        <div class="flex justify-center space-x-2">
+                                            <!-- Botão DIMINUIR PREÇO (Substituiu Comprar) -->
+                                            <form th:action="@{/requisitos/diminuir-preco}" method="post">
+                                                <input type="hidden" name="isbn" th:value="${l.isbn_livro}">
+                                                <input type="hidden" name="precoAtual" th:value="${l.preco}">
+                                                <button type="submit" class="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded text-red-700 bg-red-100 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition" title="Diminuir preço em R$ 5,00">
+                                                    <i class="fas fa-arrow-down mr-1"></i> -R$5
+                                                </button>
+                                            </form>
+                                            
+                                            <!-- Botão AUMENTAR PREÇO -->
+                                            <form th:action="@{/requisitos/aumentar-preco}" method="post">
+                                                <input type="hidden" name="isbn" th:value="${l.isbn_livro}">
+                                                <input type="hidden" name="precoAtual" th:value="${l.preco}">
+                                                <button type="submit" class="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded text-green-700 bg-green-100 hover:bg-green-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition" title="Aumentar preço em R$ 5,00">
+                                                    <i class="fas fa-arrow-up mr-1"></i> +R$5
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <!-- Estado Vazio -->
+                        <div th:unless="${livrosFiltrados}" class="text-center py-10">
+                            <i class="fas fa-search text-gray-300 text-4xl mb-3"></i>
+                            <p class="text-gray-500 text-sm">Use o filtro acima para buscar livros.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. VIEW: Relatório (Mantido igual) -->
+            <section class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                <div class="bg-gradient-to-r from-purple-600 to-purple-700 px-6 py-4 flex justify-between items-center">
+                    <h2 class="text-white font-bold text-lg flex items-center">
+                        <i class="fas fa-chart-pie mr-2"></i> 2. View SQL (Relatório)
+                    </h2>
+                    <span class="bg-purple-800 text-purple-100 text-xs px-2 py-1 rounded">VW_Relatorio_Vendas...</span>
+                </div>
+                
+                <div class="p-6">
+                    <p class="text-gray-500 text-sm mb-4">
+                        Exibe dados complexos combinados de várias tabelas através de uma <strong>View</strong>.
+                    </p>
+
+                    <div class="overflow-y-auto max-h-96 border rounded-lg">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50 sticky top-0">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID Pedido</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cliente</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                <tr th:each="v : ${relatorio}" class="hover:bg-gray-50">
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm font-mono text-gray-500" th:text="'#' + ${v.idPedido}"></td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900" th:text="${v.nomeCliente}"></td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm font-bold text-gray-800" th:text="'R$ ' + ${v.valorTotal}"></td>
+                                    <td class="px-4 py-3 whitespace-nowrap">
+                                        <span th:class="${v.statusPagamento == 'PAGO' ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-orange-800'} + ' px-2 inline-flex text-xs leading-5 font-semibold rounded-full'"
+                                              th:text="${v.statusPagamento}">
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr th:if="${#lists.isEmpty(relatorio)}">
+                                    <td colspan="4" class="px-6 py-8 text-center text-sm text-gray-500">
+                                        Nenhuma venda registada.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. TRIGGER: Auditoria -->
+            <section class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-8">
+                <div class="bg-gradient-to-r from-orange-500 to-orange-600 px-6 py-4 flex justify-between items-center">
+                    <h2 class="text-white font-bold text-lg flex items-center">
+                        <i class="fas fa-history mr-2"></i> 3. Trigger SQL (Auditoria)
+                    </h2>
+                    <span class="bg-orange-700 text-orange-100 text-xs px-2 py-1 rounded">TR_Auditoria_Preco...</span>
+                </div>
+                
+                <div class="p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="bg-orange-100 rounded-full p-2 mr-3">
+                            <i class="fas fa-info text-orange-500"></i>
+                        </div>
+                        <p class="text-sm text-gray-600">
+                            Ao clicar em <strong>+R$5</strong> ou <strong>-R$5</strong>, o Java atualiza a tabela <code>livros</code>. O SQL Server detecta o UPDATE e dispara a Trigger que grava o histórico abaixo automaticamente.
+                        </p>
+                    </div>
+
+                    <div class="overflow-x-auto border rounded-lg">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ISBN</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Preço Antigo</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Preço Novo</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Data</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                <tr th:each="h : ${historico}" class="hover:bg-gray-50">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-600" th:text="${h.isbn_livro}"></td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        <span th:text="'R$ ' + ${h.preco_antigo}"></span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-bold" 
+                                        th:classappend="${h.preco_novo > h.preco_antigo} ? 'text-green-600' : 'text-red-600'">
+                                        <span th:text="'R$ ' + ${h.preco_novo}"></span>
+                                        <i th:if="${h.preco_novo > h.preco_antigo}" class="fas fa-arrow-up text-xs ml-1"></i>
+                                        <i th:if="${h.preco_novo < h.preco_antigo}" class="fas fa-arrow-down text-xs ml-1"></i>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        <span th:text="${#dates.format(h.data_alteracao, 'dd/MM/yyyy HH:mm:ss')}"></span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                                            Auditado
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr th:if="${#lists.isEmpty(historico)}">
+                                    <td colspan="5" class="px-6 py-8 text-center text-sm text-gray-500">
+                                        Nenhum histórico registrado.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+    
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 mt-auto">
+        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+            <p class="text-center text-sm text-gray-500">
+                &copy; 2025 Projeto Livraria - Requisitos SQL 
+            </p>
+        </div>
+    </footer>
+
+</body>
+</html>

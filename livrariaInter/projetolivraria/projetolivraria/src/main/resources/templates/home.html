@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Livraria - Painel Principal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Ajuste fino na barra de rolagem para combinar */
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #D9B89C; }
+        ::-webkit-scrollbar-thumb { background: #592202; border-radius: 5px; }
+        ::-webkit-scrollbar-thumb:hover { background: #A65C1C; }
+    </style>
+</head>
+<!-- Body: -->
+<body class="bg-[#D9B89C] min-h-screen font-sans text-[#260101]">
+
+<!-- Header:  -->
+<header class="bg-[#592202] border-b-4 border-[#A65C1C] shadow-lg px-6 py-4">
+    <div class="max-w-7xl mx-auto flex justify-between items-center">
+        <!-- Título:) -->
+        <h1 class="text-2xl font-extrabold text-[#D98E32] tracking-tight flex items-center">
+            <i class="fa-solid fa-book-open mr-3 text-[#D9B89C]"></i> Sistema Livraria
+        </h1>
+        <div class="text-sm font-medium text-[#D9B89C]">
+            <!-- Verifica se o usuário está logado antes de tentar mostrar o nome -->
+            <span class="mr-4">Bem-vindo, <strong class="text-white" th:text="${#authentication != null ? #authentication.name : 'Visitante'}">Admin</strong></span>
+            <!-- Botão Sair: -->
+            <a th:href="@{/logout}" class="text-[#D98E32] hover:text-white transition-colors font-semibold">Sair</a>
+        </div>
+    </div>
+</header>
+
+<main class="max-w-7xl mx-auto p-6 mt-6">
+    <!-- Título H2: Borda lateral Ouro (#D98E32) -->
+    <h2 class="text-3xl font-bold text-[#260101] mb-8 border-l-8 border-[#D98E32] pl-4">Painel de Controle</h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        
+        <!-- CARD: LIVROS -->
+        <a th:href="@{/livros}" class="group bg-white rounded-xl shadow-lg border-2 border-[#A65C1C] p-6 flex items-start gap-5 transition-all duration-300 hover:-translate-y-2 hover:shadow-[#592202]/40 hover:border-[#D98E32]">
+            <div class="bg-[#260101] text-[#D98E32] p-4 rounded-lg shadow-md group-hover:bg-[#592202] transition-colors">
+                <i class="fa-solid fa-book text-2xl"></i>
+            </div>
+            <div>
+                <h3 class="text-xl font-bold text-[#592202] group-hover:text-[#A65C1C] transition-colors">Livros</h3>
+                <p class="text-[#A65C1C] text-sm mt-1 font-medium">Gerenciar acervo completo</p>
+            </div>
+        </a>
+
+        <!-- CARD: CLIENTES -->
+        <a th:href="@{/clientes}" class="group bg-white rounded-xl shadow-lg border-2 border-[#A65C1C] p-6 flex items-start gap-5 transition-all duration-300 hover:-translate-y-2 hover:shadow-[#592202]/40 hover:border-[#D98E32]">
+            <div class="bg-[#260101] text-[#D98E32] p-4 rounded-lg shadow-md group-hover:bg-[#592202] transition-colors">
+                <i class="fa-solid fa-users text-2xl"></i>
+            </div>
+            <div>
+                <h3 class="text-xl font-bold text-[#592202] group-hover:text-[#A65C1C] transition-colors">Clientes</h3>
+                <p class="text-[#A65C1C] text-sm mt-1 font-medium">Gerenciar cadastros e perfis</p>
+            </div>
+        </a>
+
+        <!-- CARD: PEDIDOS -->
+        <a th:href="@{/pedidos}" class="group bg-white rounded-xl shadow-lg border-2 border-[#A65C1C] p-6 flex items-start gap-5 transition-all duration-300 hover:-translate-y-2 hover:shadow-[#592202]/40 hover:border-[#D98E32]">
+            <div class="bg-[#260101] text-[#D98E32] p-4 rounded-lg shadow-md group-hover:bg-[#592202] transition-colors">
+                <i class="fa-solid fa-cart-shopping text-2xl"></i>
+            </div>
+            <div>
+                <h3 class="text-xl font-bold text-[#592202] group-hover:text-[#A65C1C] transition-colors">Pedidos</h3>
+                <p class="text-[#A65C1C] text-sm mt-1 font-medium">Vendas e fluxo de pagamentos</p>
+            </div>
+        </a>
+
+        <!-- CARD: FORNECEDORES -->
+        <a th:href="@{/fornecedores}" class="group bg-white rounded-xl shadow-lg border-2 border-[#A65C1C] p-6 flex items-start gap-5 transition-all duration-300 hover:-translate-y-2 hover:shadow-[#592202]/40 hover:border-[#D98E32]">
+            <div class="bg-[#260101] text-[#D98E32] p-4 rounded-lg shadow-md group-hover:bg-[#592202] transition-colors">
+                <i class="fa-solid fa-truck text-2xl"></i>
+            </div>
+            <div>
+                <h3 class="text-xl font-bold text-[#592202] group-hover:text-[#A65C1C] transition-colors">Fornecedores</h3>
+                <p class="text-[#A65C1C] text-sm mt-1 font-medium">Parceiros e distribuição</p>
+            </div>
+        </a>
+
+        <!-- CARD: FUNCIONÁRIOS -->
+        <a th:href="@{/funcionarios}" class="group bg-white rounded-xl shadow-lg border-2 border-[#A65C1C] p-6 flex items-start gap-5 transition-all duration-300 hover:-translate-y-2 hover:shadow-[#592202]/40 hover:border-[#D98E32]">
+            <div class="bg-[#260101] text-[#D98E32] p-4 rounded-lg shadow-md group-hover:bg-[#592202] transition-colors">
+                <i class="fa-solid fa-id-badge text-2xl"></i>
+            </div>
+            <div>
+                <h3 class="text-xl font-bold text-[#592202] group-hover:text-[#A65C1C] transition-colors">Funcionários</h3>
+                <p class="text-[#A65C1C] text-sm mt-1 font-medium">Controle de usuários do sistema</p>
+            </div>
+        </a>
+
+        <!--  CARD: REQUISITOS SQL -->
+        <a th:href="@{/requisitos}" class="group bg-white rounded-xl shadow-lg border-2 border-[#D98E32] p-6 flex items-start gap-5 transition-all duration-300 hover:-translate-y-2 hover:shadow-[#D98E32]/40 hover:bg-[#FFF8F0]">
+            <div class="bg-[#D98E32] text-[#260101] p-4 rounded-lg shadow-md group-hover:bg-[#A65C1C] group-hover:text-white transition-colors">
+                <i class="fa-solid fa-database text-2xl"></i>
+            </div>
+            <div>
+                <h3 class="text-xl font-bold text-[#592202] group-hover:text-[#D98E32] transition-colors">SQL Avançado</h3>
+                <p class="text-[#A65C1C] text-sm mt-1 font-medium">Painel Acadêmico: Views, Procedures e Triggers</p>
+            </div>
+        </a>
+
+        <!-- CARD: BACKUP -->
+        <a th:href="@{/backup}" class="group bg-white rounded-xl shadow-lg border-2 border-[#A65C1C] p-6 flex items-start gap-5 transition-all duration-300 hover:-translate-y-2 hover:shadow-[#592202]/40 hover:border-[#D98E32]">
+            <div class="bg-[#260101] text-[#D98E32] p-4 rounded-lg shadow-md group-hover:bg-[#592202] transition-colors">
+                <!-- Ícone Backup) -->
+                <i class="fa-solid fa-floppy-disk text-2xl"></i>
+            </div>
+            <div>
+                <h3 class="text-xl font-bold text-[#592202] group-hover:text-[#A65C1C] transition-colors">BACKUP</h3>
+                <p class="text-[#A65C1C] text-sm mt-1 font-medium">Backup e Restore</p>
+            </div>
+        </a>
+
+    </div>
+</main>
+
+<footer class="text-center p-8 mt-10 text-sm text-[#592202] font-semibold opacity-80">
+    &copy; 2025 Livraria Projeto
+</footer>
+
+</body>
+</html>

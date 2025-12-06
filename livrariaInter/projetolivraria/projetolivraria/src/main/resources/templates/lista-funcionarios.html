@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Funcionários - Sistema Livraria</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Personalização da barra de rolagem */
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #D9B89C; }
+        ::-webkit-scrollbar-thumb { background: #592202; border-radius: 5px; }
+        ::-webkit-scrollbar-thumb:hover { background: #A65C1C; }
+    </style>
+</head>
+<!-- Body: Fundo Bege (#D9B89C) e Texto Marrom Escuro (#260101) -->
+<body class="bg-[#D9B89C] min-h-screen font-sans text-[#260101]">
+    
+<!-- Navbar: Marrom Profundo (#592202) -->
+<nav class="bg-[#592202] border-b-4 border-[#A65C1C] shadow-lg p-4 mb-8">
+    <div class="max-w-7xl mx-auto flex justify-between items-center">
+        <!-- Título: Ouro (#D98E32) -->
+        <a th:href="@{/home}" class="font-extrabold text-xl text-[#D98E32] flex items-center hover:text-white transition-colors">
+            <i class="fa-solid fa-book-open mr-2"></i> Sistema Livraria
+        </a>
+        
+        <!-- Agrupamento de Botões (Lado Direito) -->
+        <div class="flex items-center gap-4">
+            <!-- Botão Novo: Ouro (#D98E32) com texto escuro -->
+            <a th:href="@{/funcionarios/novo}" class="bg-[#D98E32] hover:bg-[#A65C1C] text-[#260101] hover:text-white font-bold py-2 px-4 rounded shadow-md transition-all duration-200 flex items-center">
+                <i class="fas fa-plus mr-2"></i> Novo Funcionário
+            </a>
+
+            <!-- Botão Voltar: Borda Laranja (#A65C1C) e texto Claro -->
+            <a th:href="@{/home}" class="flex items-center border border-[#A65C1C] text-[#D9B89C] hover:bg-[#A65C1C] hover:text-white px-4 py-2 rounded transition duration-200 font-semibold">
+                <i class="fas fa-arrow-left mr-2"></i> Voltar 
+            </a>
+        </div>
+    </div>
+</nav>
+
+<main class="max-w-7xl mx-auto px-4">
+    
+
+     <!-- Campo de Busca - Layout responsivo melhorado -->
+    <form th:action="@{/funcionarios}" method="get" class="mb-6 flex flex-col sm:flex-row gap-4">
+        <input 
+            type="text" 
+            name="busca" 
+            placeholder="Pesquisar por Nome" 
+            th:value="${busca}"
+            class="flex-grow p-3 border-2 border-[#A65C1C] rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-[#D98E32]"
+        />
+        <div class="flex gap-4">
+            <button type="submit" class="bg-[#A65C1C] hover:bg-[#D98E32] text-white px-6 py-3 rounded-lg shadow-md font-bold transition-all duration-200 flex-shrink-0">
+                <i class="fas fa-search"></i> Buscar
+            </button>
+            <!-- Botão para Limpar a Busca -->
+            <a th:href="@{/funcionarios}" class="border-2 border-[#592202] text-[#592202] hover:bg-[#592202] hover:text-white px-6 py-3 rounded-lg font-bold transition-all duration-200 flex items-center flex-shrink-0">
+                <i class="fa-solid fa-eraser mr-2"></i> Limpar
+            </a>
+        </div>
+    </form>
+
+    <div class="bg-white shadow-xl rounded-lg overflow-hidden border-2 border-[#A65C1C]">
+        <table class="min-w-full divide-y divide-[#D9B89C]">
+            <!-- Cabeçalho da Tabela: Marrom Escuro (#260101) com Texto Ouro (#D98E32) -->
+            <thead class="bg-[#260101] text-[#D98E32]">
+                <tr>
+                    <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">ID</th>
+                    <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Nome</th>
+                    <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Email</th>
+                    <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Cargo</th>
+                    <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Ações</th>
+                </tr>
+            </thead>
+            <!-- Corpo da Tabela -->
+            <tbody class="bg-white divide-y divide-[#D9B89C]">
+                <tr th:each="f : ${funcionarios}" class="hover:bg-[#FFF8F0] transition-colors">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-[#592202]" th:text="${f.id}"></td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-[#260101]" th:text="${f.nome}"></td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-[#592202]" th:text="${f.email}"></td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-[#D9B89C] text-[#592202]" th:text="${f.cargo}"></span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <!-- Ações: Cores do tema -->
+                        <a th:href="@{/funcionarios/novo(id=${f.id})}" class="text-[#A65C1C] hover:text-[#D98E32] mr-4 transition-colors font-bold">
+                            <i class="fas fa-edit"></i> Editar
+                        </a>
+                        <a th:href="@{/funcionarios/deletar/{id}(id=${f.id})}" class="text-[#592202] hover:text-red-600 transition-colors font-bold" onclick="return confirm('Tem certeza que deseja excluir este funcionário?')">
+                            <i class="fas fa-trash-alt"></i> Excluir
+                        </a>
+                    </td>
+                </tr>
+                <!-- Estado Vazio -->
+                <tr th:if="${#lists.isEmpty(funcionarios)}">
+                    <td colspan="5" class="px-6 py-10 text-center text-[#A65C1C] italic text-lg">
+                        <i class="fa-solid fa-folder-open mb-2 block text-3xl opacity-50"></i>
+                        Nenhum funcionário cadastrado.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+
+<!-- Footer simples para fechar a página -->
+<footer class="text-center p-8 mt-4 text-sm text-[#592202] opacity-70">
+    &copy; 2025 Livraria Projeto
+</footer>
+
+</body>
+</html>
