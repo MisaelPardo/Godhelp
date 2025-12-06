@@ -34,12 +34,12 @@ Este projeto representa uma **solução de controle de estoque para livrarias** 
 
 ## 👤 Equipe
 
-| Nome                                  | Função         |
-|----------------------------------------|---------------|
-| Misael Francisco Pardo                 | Desenvolvedor  |
-| Caio Samuel do E. S. Montes            | Desenvolvedor  |
-| Luciano César M. da C. Inocêncio       | Desenvolvedor  |
-| Luis Eduardo Aguiar                    | Desenvolvedor  |
+| Nome                                      | Função         |
+|-------------------------------------------|----------------|
+| Misael Francisco Pardo                    | Desenvolvedor  |
+| Caio Samuel do Espirito Santo Montes      | Desenvolvedor  |
+| Luciano César Marques da Costa Inocêncio  | Desenvolvedor  |
+| Luís Eduardo Aguiar                       | Desenvolvedor  |
 
 ---
 
