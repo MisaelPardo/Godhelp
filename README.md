@@ -1,103 +1,81 @@
-📚 Sistema de Controle de Estoque de Livraria
+<p align="center">
+  <img src="https://img.icons8.com/color/100/book-shelf.png" width="70" alt="Book Library Icon"/>
+</p>
 
-Projeto acadêmico desenvolvido para a disciplina de Informática para Negócios, focado em Arquitetura de Software e boas práticas de desenvolvimento.
+<h1 align="center">
+  <b>📚 Sistema de Controle de Estoque de Livraria</b>
+</h1>
 
-👥 Integrantes do Projeto
+<p align="center">
+  <b>Aplicação completa desenvolvida em Java + Spring Boot, com RESTful API e front-end web para gestão moderna e segura de livraria.</b>
+  <br>
+  <i>Projeto Acadêmico Fatec Rio Preto
+    Curso Informática para Negócios</i>
+</p>
 
-Este sistema foi idealizado e desenvolvido por:
+<p align="center">
+  <img src="https://img.shields.io/badge/Java-17-orange?logo=java"/>
+  <img src="https://img.shields.io/badge/Spring_Boot-3.0-brightgreen?logo=springboot"/>
+  <img src="https://img.shields.io/badge/SQL%20Server-blue?logo=microsoftsqlserver"/>
+  <img src="https://img.shields.io/badge/HTML-53.9%25-red?logo=html5"/>
+  <img src="https://img.shields.io/badge/CSS-1.1%25-blue?logo=css3"/>
+  <img src="https://img.shields.io/badge/JavaScript-0.1%25-yellow?logo=javascript"/>
+  <img src="https://img.shields.io/badge/Maven-automation-lightgrey?logo=apachemaven"/>
+  <img src="https://img.shields.io/badge/Spring_Security-JWT%20%2B%20BCrypt-yellowgreen?logo=springsecurity"/>
+</p>
 
-Misael Francisco Pardo
+---
 
-Caio Samuel do Espírito Santo Montes
+## 🎨 Visão Geral
 
-Luciano César Marques da Costa Inocêncio
+Este projeto representa uma **solução de controle de estoque para livrarias** com arquitetura profissional, interface web amigável e API RESTful robusta. Permite administrar o ciclo completo: cadastros, estoque, pedidos, pagamentos e segurança.
 
-Luis Eduardo Aguiar
+---
 
-🧾 Sobre o Projeto
+## 👤 Equipe
 
-O sistema simula a estrutura real de uma livraria, permitindo o gerenciamento completo do ciclo de vendas e estoque. O foco principal foi a aplicação de conceitos de Programação Orientada a Objetos (POO), Arquitetura em Camadas e desenvolvimento de APIs RESTful robustas.
+| Nome                                  | Função         |
+|----------------------------------------|---------------|
+| Misael Francisco Pardo                 | Desenvolvedor  |
+| Caio Samuel do E. S. Montes            | Desenvolvedor  |
+| Luciano César M. da C. Inocêncio       | Desenvolvedor  |
+| Luis Eduardo Aguiar                    | Desenvolvedor  |
 
-A aplicação gerencia desde o cadastro de livros e controle de estoque até a realização de pedidos, pagamentos e controle de acesso de funcionários via autenticação segura.
+---
 
-✨ Objetivos Acadêmicos
+## 🚀 Funcionalidades Principais
 
-Demonstrar modelagem de entidades e relacionamentos complexos.
+- <b>🔑 Autenticação & Segurança:</b> Login, proteção por token JWT, senhas seguras com BCrypt, controle de permissões (Admin/Usuário)
+- <b>📚 Controle de Livros & Estoque:</b> Cadastro, pesquisa, atualização e baixa automática
+- <b>🧾 Pedidos & Vendas:</b> Carrinho, histórico, múltiplos itens por pedido
+- <b>💰 Financeiro:</b> Gestão de pagamentos e status de cada pedido
+- <b>👥 Cadastros:</b> Gerenciamento de clientes, fornecedores e funcionários
+- <b>🔍 Consultas Avançadas:</b> Busca dinâmica com filtros práticos
 
-Implementar arquitetura profissional (Controller, Service, Repository, Entity).
+---
 
-Garantir segurança e validação de dados.
+## 🛠️ Tecnologias & Ferramentas
 
-Integração real com banco de dados relacional.
+- **Back-end:** Java 17, Spring Boot, Spring Data JPA, Spring Security, JWT, BCrypt
+- **Front-end:** HTML, CSS, JavaScript
+- **Banco de Dados:** SQL Server (integrado via JPA/Hibernate)
+- **Build & Gestão:** Maven
+- **Utilidades:** Lombok (código enxuto), Git
 
-🛠 Tecnologias Utilizadas
+---
 
-O projeto foi construído utilizando uma stack moderna e robusta:
+## 📐 Arquitetura e Estrutura
 
-Linguagem: Java 17
+- Arquitetura em camadas: <b>Controller → Service → Repository → Entities</b>
+- Classes organizadas por domínio e responsabilidade
+- Tabelas criadas e gerenciadas via Hibernate:
+  - `funcionarios`, `clientes`, `fornecedores`, `livros`, `pedidos`, `itens_pedido`, `pagamentos`
+- Separação clara entre regras de negócio, persistência e apresentação
 
-Framework Principal: Spring Boot
+---
 
-Web: Spring Web (REST API)
-
-Persistência: Spring Data JPA (Hibernate)
-
-Banco de Dados: Microsoft SQL Server
-
-Segurança: Spring Security (JWT + BCrypt)
-
-Ferramentas: Maven, Lombok, Git
-
-🧱 Arquitetura e Entidades
-
-O sistema está organizado no pacote entities, refletindo as tabelas do banco de dados através do JPA:
-
-👥 Pessoas
-
-FuncionarioEntity: Gestão de staff e usuários do sistema.
-
-ClienteEntity: Gestão de consumidores.
-
-📘 Estoque & Produtos
-
-LivroEntity: Cadastro detalhado das obras.
-
-FornecedorEntity: Origem dos produtos.
-
-🧾 Vendas e Operações
-
-PedidoEntity: Cabeçalho da venda.
-
-ItemPedidoEntity: Detalhes dos livros dentro de cada pedido.
-
-PagamentoEntity: Registro financeiro da transação.
-
-🔐 Segurança Implementada
-
-Autenticação via Spring Security.
-
-Criptografia de senhas com BCrypt.
-
-Usuário Admin criado automaticamente via CommandLineRunner para setup inicial.
-
-🛡 Funcionalidades Principais
-
-✅ Autenticação e Segurança: Login com controle de permissões (Admin vs Usuário Comum).
-✅ Gestão de Pessoas: CRUD completo de Clientes, Funcionários e Fornecedores.
-✅ Controle de Estoque: Gerenciamento de Livros e atualização de quantidades.
-✅ Processo de Venda: Registro de Pedidos com múltiplos itens.
-✅ Financeiro: Registro de pagamentos associados aos pedidos.
-✅ Consultas: Buscas com filtros e relacionamentos JPA.
-
-🚀 Como Executar o Projeto
-
-Pré-requisitos
-
-Java 17 JDK instalado.
-
-Maven instalado.
-
-SQL Server rodando.
-
-Clone o repositório:
+```bash
+# Clone o repositório
 git clone https://github.com/MisaelPardo/Godhelp
+---
+⭐Feito com dedicação, aprendizado & vontade de transformar ideias em soluções reais!⭐
